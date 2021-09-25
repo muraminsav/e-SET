@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Card, Button, Alert } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
+import auth from '../secure/auth';
+import { loginUser, registerUser } from '../api/Api';
 const url = 'http://localhost:3001/';
 
 export default function SignForm(props) {
@@ -10,34 +12,45 @@ export default function SignForm(props) {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
+  const [redirect, setRedirect] = useState(false);
+  const login = { email, password };
+  const register = { firstName, lastName, email, password };
 
   const submit = async (e, display) => {
     e.preventDefault();
 
-    if (password !== passwordConfirm && display === 'block') {
-      setError('non matching password');
-      console.log(error);
+    if (password !== passwordConfirm && display === 'block')
+      return setError('non matching password');
+
+    if (display === 'block') {
+      const response = registerUser(register);
+      const content = await response.json();
+      if (content.error) return setError(content.error);
+      setRedirect(true);
+      return <Redirect to="/me" />;
     } else {
-      const endpoint = display === 'block' ? 'register' : 'login';
-      const postBody =
-        props.display === 'block'
-          ? { firstName, lastName, email, password }
-          : { email, password };
-
-      const response = fetch(url + endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postBody),
+      auth.login(async () => {
+        const response = await loginUser(login);
+        const content = await response.json();
+        if (content.error) return setError(content.error);
+        setRedirect(true);
       });
-
-      return <Redirect to="/login" />;
     }
   };
 
+  console.log(auth.isAuthenticated());
+
+  if (redirect) {
+    if (props.display === 'block') {
+      return <Redirect to="/login" />;
+    } else {
+      return <Redirect to="/me" />;
+    }
+  }
   return (
     <div
       className="d-flex align-items-center justify-content-center flex-column "
-      style={{ minHeight: '50vh' }}
+      style={{ minHeight: '90vh' }}
     >
       <Card>
         <Card.Body

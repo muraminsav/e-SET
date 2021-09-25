@@ -7,6 +7,7 @@ import Solo from './components/Solo';
 import About from './components/About';
 import Multi from './components/Multi';
 import Profile from './components/Profile';
+import ProtectedRoutes from './secure/ProtectedRoutes';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
               path="/"
               component={() => <SignForm display="none" />}
             />
-            <Route exact path="/me" component={DashboardComponent} />
+            <ProtectedRoutes exact path="/me" component={DashboardComponent} />
             <Route
               path="/signup"
               component={() => <SignForm display="block" />}
@@ -30,8 +31,9 @@ function App() {
             />
             <Route exact path="/about" component={() => <About />} />
             <Route exact path="/solo" component={() => <Solo />} />
-            <Route path="/multi" component={() => <Multi />} />
-            <Route path="/profile" component={() => <Profile />} />
+            <ProtectedRoutes path="/multi" component={() => <Multi />} />
+            <ProtectedRoutes path="/profile" component={() => <Profile />} />
+            <Route path="**" component={() => <h1>404 page not found</h1>} />
           </Switch>
         </Router>
       </div>
