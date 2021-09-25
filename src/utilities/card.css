@@ -1,0 +1,27 @@
+.square {
+  border: solid 1px;
+  height: 3vh;
+  width: 4vh;
+  border-radius: 4px;
+}
+.circle {
+  border: solid 2px;
+  height: 4vh;
+  width: 4vh;
+  border-radius: 25px;
+}
+.pill {
+  border: solid 2px;
+  height: 3vh;
+  width: 7vh;
+  border-radius: 25px;
+}
+
+.half {
+  background-image: url('./dotts.png');
+  background-size: 20px;
+}
+.cardF {
+  width: 12vh;
+  height: 12vh;
+}
