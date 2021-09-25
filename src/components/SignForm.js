@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Card, Button, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 const url = 'http://localhost:3001/';
 
 export default function SignForm(props) {
@@ -14,7 +14,7 @@ export default function SignForm(props) {
   const submit = async (e, display) => {
     e.preventDefault();
 
-    if (password === passwordConfirm) {
+    if (password !== passwordConfirm && display === 'block') {
       setError('non matching password');
       console.log(error);
     } else {
@@ -30,7 +30,7 @@ export default function SignForm(props) {
         body: JSON.stringify(postBody),
       });
 
-      e.target.value = '';
+      return <Redirect to="/login" />;
     }
   };
 
