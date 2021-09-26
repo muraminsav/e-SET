@@ -1,14 +1,13 @@
 import React from 'react';
 import { Container, Navbar, Nav } from 'react-bootstrap';
 import auth from '../secure/auth';
+import { logoutUser } from '../api/Api';
+
+// useEffect
 
 export default function Navibar() {
-  auth.logout(async () => {
-    await fetch('http://localhost:3001/logout', {
-      method: 'POST',
-      header: { 'Content-Type': 'application/json' },
-      credential: 'include',
-    });
+  const logout = auth.logout(() => {
+    logoutUser('token');
   });
 
   return (
@@ -25,7 +24,7 @@ export default function Navibar() {
               <Nav.Link href="/me">Home</Nav.Link>
               <Nav.Link href="/profile">Profile Settings</Nav.Link>
               <Nav.Link href="/about">About</Nav.Link>
-              <Nav.Link onClick={auth.logout} href="/login">
+              <Nav.Link onClick={logout} href="/login">
                 Logout
               </Nav.Link>
             </Nav>

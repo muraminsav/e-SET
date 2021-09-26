@@ -53,7 +53,7 @@ exports.loginUser = async (req, res) => {
       httpOnly: true,
       maxAge: 1 * 60 * 60 * 1000,
     });
-    res.status(200).send({ message: 'success' });
+    res.status(200).send({ token });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error: 'database error: ' + error });
@@ -81,10 +81,14 @@ exports.getUser = async (req, res) => {
 
 exports.logout = (req, res) => {
   try {
-    res.cookie('jwt', ' ', { maxAge: 0 });
-    res.status(201).send({ message: 'success' });
+    const token = jwt.sign({ _id: user[0].id }, secret);
+    res.cookie('jwt', '', {
+      httpOnly: true,
+      maxAge: 0,
+    });
+    res.status(201).send({ token });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ error: 'database error: ' + err });
+    res.status(500).send({ error: 'database error: ' + error });
   }
 };

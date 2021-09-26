@@ -3,9 +3,16 @@ import { Form, Card, Button, Alert } from 'react-bootstrap';
 import { Link, Redirect } from 'react-router-dom';
 import auth from '../secure/auth';
 import { loginUser, registerUser } from '../api/Api';
-const url = 'http://localhost:3001/';
-
 export default function SignForm(props) {
+  const userDef = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  };
+  const [userReg, setUserReg] = useState(userDef);
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,18 +34,21 @@ export default function SignForm(props) {
       const content = await response.json();
       if (content.error) return setError(content.error);
       setRedirect(true);
-      return <Redirect to="/me" />;
     } else {
       auth.login(async () => {
         const response = await loginUser(login);
         const content = await response.json();
-        if (content.error) return setError(content.error);
+        if (content.error) {
+          auth.logout(() => console.log(content));
+          return setError(content.error);
+        }
         setRedirect(true);
       });
     }
   };
 
   console.log(auth.isAuthenticated());
+  console.log(userReg);
 
   if (redirect) {
     if (props.display === 'block') {

@@ -3,10 +3,7 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SignForm from './components/SignForm';
 import DashboardComponent from './components/DashboardComponent';
-import Solo from './components/Solo';
-import About from './components/About';
-import Multi from './components/Multi';
-import Profile from './components/Profile';
+
 import ProtectedRoutes from './secure/ProtectedRoutes';
 
 function App() {
@@ -22,18 +19,15 @@ function App() {
             />
             <ProtectedRoutes exact path="/me" component={DashboardComponent} />
             <Route
+              exact
               path="/signup"
               component={() => <SignForm display="block" />}
             />
             <Route
+              exact
               path="/login"
               component={() => <SignForm display="none" />}
             />
-            <Route exact path="/about" component={() => <About />} />
-            <Route exact path="/solo" component={() => <Solo />} />
-            <ProtectedRoutes path="/multi" component={() => <Multi />} />
-            <ProtectedRoutes path="/profile" component={() => <Profile />} />
-            <Route path="**" component={() => <h1>404 page not found</h1>} />
           </Switch>
         </Router>
       </div>
