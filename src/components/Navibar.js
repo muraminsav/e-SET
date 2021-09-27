@@ -24,7 +24,7 @@ export default function Navibar() {
               <Nav.Link href="/me">Home</Nav.Link>
               <Nav.Link href="/profile">Profile Settings</Nav.Link>
               <Nav.Link href="/about">About</Nav.Link>
-              <Nav.Link onClick={logout} href="/login">
+              <Nav.Link onClick={logout} href="/">
                 Logout
               </Nav.Link>
             </Nav>

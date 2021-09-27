@@ -1,62 +1,68 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Form, Card, Button, Alert } from 'react-bootstrap';
-import { Link, Redirect } from 'react-router-dom';
+import DashboardComponent from './DashboardComponent';
+import { BrowserRouter as Router, Switch, Link, Route } from 'react-router-dom';
 import auth from '../secure/auth';
 import { loginUser, registerUser } from '../api/Api';
+import { UserContext } from '../context/userContext';
+
+const regInitial = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  passwordConfirm: '',
+};
+
+const logInitial = {
+  email: '',
+  password: '',
+};
+let initialState = {};
+let apiCall;
+let path = '';
+
 export default function SignForm(props) {
-  const userDef = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-  };
-  const [userReg, setUserReg] = useState(userDef);
+  const { userInfo, setUserInfo } = useContext(UserContext);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [error, setError] = useState('');
-  const [redirect, setRedirect] = useState(false);
-  const login = { email, password };
-  const register = { firstName, lastName, email, password };
-
-  const submit = async (e, display) => {
-    e.preventDefault();
-
-    if (password !== passwordConfirm && display === 'block')
-      return setError('non matching password');
-
-    if (display === 'block') {
-      const response = registerUser(register);
-      const content = await response.json();
-      if (content.error) return setError(content.error);
-      setRedirect(true);
-    } else {
-      auth.login(async () => {
-        const response = await loginUser(login);
-        const content = await response.json();
-        if (content.error) {
-          auth.logout(() => console.log(content));
-          return setError(content.error);
-        }
-        setRedirect(true);
-      });
-    }
-  };
-
-  console.log(auth.isAuthenticated());
-  console.log(userReg);
-
-  if (redirect) {
-    if (props.display === 'block') {
-      return <Redirect to="/login" />;
-    } else {
-      return <Redirect to="/me" />;
-    }
+  if (props.display === 'block') {
+    initialState = { ...regInitial };
+    apiCall = registerUser;
+    path = '/';
+  } else {
+    initialState = { ...logInitial };
+    apiCall = loginUser;
+    path = '/me';
   }
+
+  const [state, setState] = useState(initialState);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (props.display === 'block' && state.password !== state.passwordConfirm)
+      return setError('non matching password');
+    const user = { ...state };
+    const res = await apiCall(user);
+    // console.log(res);
+    setUserInfo(res);
+    if (res.error) {
+      setError(res.message);
+      setState(initialState);
+    } else {
+      props.setIsAuthenticated(true);
+      auth.login(() => props.history.push(path));
+    }
+  };
+
   return (
     <div
       className="d-flex align-items-center justify-content-center flex-column "
@@ -77,7 +83,9 @@ export default function SignForm(props) {
               <Form.Control
                 type="text"
                 required={props.display === 'block' ? true : false}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={state.firstName}
+                name="firstName"
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group id="last-name" style={{ display: props.display }}>
@@ -85,7 +93,9 @@ export default function SignForm(props) {
               <Form.Control
                 type="text"
                 required={props.display === 'block' ? true : false}
-                onChange={(e) => setLastName(e.target.value)}
+                name="lastName"
+                value={state.lastName}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group id="email">
@@ -93,7 +103,9 @@ export default function SignForm(props) {
               <Form.Control
                 type="email"
                 required
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={state.email}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group id="password">
@@ -101,7 +113,9 @@ export default function SignForm(props) {
               <Form.Control
                 type="password"
                 required
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={state.password}
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group
@@ -112,7 +126,9 @@ export default function SignForm(props) {
               <Form.Control
                 type="password"
                 required={props.display === 'block' ? true : false}
-                onChange={(e) => setPasswordConfirm(e.target.value)}
+                name="passwordConfirm"
+                value={state.passwordConfirm}
+                onChange={handleChange}
               />
             </Form.Group>
             <div className="d-flex justify-content-center">
@@ -141,6 +157,20 @@ export default function SignForm(props) {
           </div>
         )}
       </div>
+      <Router>
+        <Switch>
+          <Route
+            exact
+            path="/me"
+            component={() => (
+              <DashboardComponent
+              // setIsAuthenticated={setIsAuthenticated}
+              // isAuthenticated={isAuthenticated}
+              />
+            )}
+          />
+        </Switch>
+      </Router>
     </div>
   );
 }

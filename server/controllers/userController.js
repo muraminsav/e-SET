@@ -1,94 +1,70 @@
 const db = require('../models/index');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const secret = 'secret';
 
 exports.createUser = async (req, res) => {
   const user = await db.User.findOne({ where: { email: req.body.email } });
 
-  try {
-    if (user) {
-      console.log('user exist');
-      return res.status(400).send({ error: 'existing user' });
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  if (user)
+    return res
+      .status(409)
+      .send({ error: '409', message: 'User already exists' });
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
   try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const user = await db.User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
+      ...req.body,
       password: hashedPassword,
-      scores: req.body.scores,
     });
-    const result = await user.save();
-    const { password, ...data } = result.toJSON();
+
+    req.session.id = user.id;
+    const { password, ...data } = user;
     res.status(201).send(data);
   } catch (error) {
-    res.status(500).send({ error: 'database error: ' + error });
+    res.status(400).send({ error, message: 'Could not create user' });
   }
 };
 
 exports.loginUser = async (req, res) => {
   try {
-    const user = await db.User.findAll({
+    const user = await db.User.findOne({
       where: { email: req.body.email },
     });
-    if (!user[0]) {
-      return res.status(404).send({ error: 'invalid credentials' });
-    }
     const passwordCheck = await bcrypt.compare(
       req.body.password,
-      user[0].password
+      user.password
     );
-    if (!passwordCheck) {
-      return res.status(404).send({ error: 'invalid credentials' });
-    }
-    const token = jwt.sign({ _id: user[0].id }, secret);
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      maxAge: 1 * 60 * 60 * 1000,
-    });
-    res.status(200).send({ token });
+    if (!passwordCheck) throw new Error();
+    req.session.id = user.id;
+    const { password, ...data } = user;
+    res.status(200).send(data);
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: 'database error: ' + error });
+    res
+      .status(401)
+      .send({ error: '401', message: 'Username or password is incorrect' });
   }
 };
 
 exports.getUser = async (req, res) => {
   try {
-    const cookie = req.cookies['jwt'];
-    const claims = jwt.verify(cookie, secret);
-
-    if (!claims) {
-      return res.status(401).send({ error: 'unauthenticated' });
-    }
-    const user = await db.User.findAll({
-      where: { id: claims._id },
-    });
-    const result = user[0];
-    const { password, ...data } = result;
-    res.status(200).send(data);
-  } catch (error) {
-    return res.status(401).send({ error: 'unauthenticated' });
+    const id = req.params[id];
+    console.log(req.params);
+    const user = await db.User.findOne({ where: { id: id } });
+    res.status(200).send(user);
+  } catch {
+    res.status(404).send({ error, message: 'User not found' });
   }
 };
 
 exports.logout = (req, res) => {
-  try {
-    const token = jwt.sign({ _id: user[0].id }, secret);
-    res.cookie('jwt', '', {
-      httpOnly: true,
-      maxAge: 0,
-    });
-    res.status(201).send({ token });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: 'database error: ' + error });
-  }
+  req.session.destroy((error) => {
+    if (error) {
+      res
+        .status(500)
+        .send({ error, message: 'Could not log out, please try again' });
+    } else {
+      res.clearCookie('sid');
+      res.sendStatus(200);
+    }
+  });
 };
