@@ -11,8 +11,20 @@ export const registerUser = async (register) => {
     .catch((err) => console.log(err));
 };
 
+export const updateUser = async (user, userId) => {
+  console.log(user, userId);
+  return await fetch(url + 'updateUser/' + userId, {
+    method: 'PUT',
+    mode: 'cors',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
+};
+
 export const loginUser = async (login) => {
-  console.log('apiLogin', login);
   return await fetch(url + 'login', {
     method: 'POST',
     mode: 'cors',
@@ -25,7 +37,6 @@ export const loginUser = async (login) => {
 };
 
 export const getUser = async (id) => {
-  console.log(id);
   return await fetch(url + `me/${id}`, {
     method: 'GET',
     mode: 'cors',
@@ -37,6 +48,7 @@ export const getUser = async (id) => {
 };
 
 export const logoutUser = async () => {
+  localStorage.removeItem('uId');
   return fetch(url + 'logout', {
     method: 'POST',
     credentials: 'include',

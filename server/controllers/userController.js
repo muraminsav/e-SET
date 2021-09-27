@@ -19,7 +19,28 @@ exports.createUser = async (req, res) => {
 
     req.session.id = user.id;
     const { password, ...data } = user;
-    res.status(201).send(data);
+    res.status(201).send({ id: data.id });
+  } catch (error) {
+    res.status(400).send({ error, message: 'Could not create user' });
+  }
+};
+exports.updateUser = async (req, res) => {
+  try {
+    const { createdAt, updatedAt, scores, id, ...data } = req.body;
+    if (data.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      data.password = hashedPassword;
+    }
+    console.log('updating', { ...data });
+    console.log(req.body.id);
+    const user = await db.User.update(
+      { ...data },
+      { where: { id: req.params.id } }
+    );
+    req.session.id = user.id;
+    const { password, ...dbData } = user;
+    res.status(201).send({ id: dbData.id });
   } catch (error) {
     res.status(400).send({ error, message: 'Could not create user' });
   }
@@ -36,10 +57,8 @@ exports.loginUser = async (req, res) => {
     );
     if (!passwordCheck) throw new Error();
     req.session.uid = user.id;
-    console.log('login userid', user.id);
-    console.log('seesioId', req.session.uid);
-    const { password, ...data } = user;
-    res.status(200).send(data);
+
+    res.status(200).send({ id: user.id });
   } catch (error) {
     res
       .status(401)
@@ -50,9 +69,9 @@ exports.loginUser = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log('id', id);
     const user = await db.User.findOne({ where: { id: id } });
-    res.status(200).send(user);
+    const { password, ...data } = user;
+    res.status(200).send(data);
   } catch (error) {
     res.status(404).send({ error, message: 'User not found' });
   }

@@ -1,12 +1,19 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+
 import { Container, Card, Button } from 'react-bootstrap';
 import Navibar from './Navibar';
 import { useEffect, useState, useContext } from 'react';
 import { getUser } from '../api/Api';
-// import ProtectedRoutes from '../secure/ProtectedRoutes';
-// import auth from '../secure/auth';
-import { UserContext } from '../context/userContext';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  NavLink,
+} from 'react-router-dom';
+import About from './About';
+import Solo from './Solo';
+import Multi from './Multi';
+import Profile from './Profile';
 const initialState = {
   firstName: '',
   lastName: '',
@@ -15,37 +22,30 @@ const initialState = {
 };
 
 export default function DashboardComponent(props) {
-  const { userInfo } = useContext(UserContext);
-  const [state, setState] = useState(initialState);
+  const [userState, setUserState] = useState(initialState);
+  const uId = localStorage.uId;
 
-  useEffect(() => {
-    const grabUser = async () => {
-      const user = await getUser(userInfo.id);
-
-      if (user) {
-        console.log('dashbordUser', user);
-        console.log('context user', userInfo.id);
-        const { firstName, lastName } = user;
-        setState((prevState) => {
-          return {
-            ...prevState,
-            firstName,
-            lastName,
-          };
-        });
-      } else {
-        console.log('No user  found ');
-      }
-    };
-    grabUser();
+  useEffect(async () => {
+    try {
+      const user = await getUser(uId);
+      setUserState({ ...user });
+    } catch (error) {
+      console.log(error, 'No user  found ');
+      throw new Error(error);
+    }
   }, []);
 
+  if (!localStorage.uId) {
+    props.history.push('/login');
+  }
+  console.log(userState);
   return (
     <>
-      <Navibar />
+      <Navibar value={userState} />
+
       <div className="d-flex align-items-center" style={{ height: '100%' }}>
         <Container>
-          <h3>Greatings {state.firstName}</h3>
+          <h3>Greatings {userState.firstName}</h3>
           <Card
             style={{
               height: '50vh',
@@ -74,6 +74,23 @@ export default function DashboardComponent(props) {
           </Button>
         </Container>
       </div>
+      {/* <Router>
+        <Switch>
+          <Route exact path="/about" render={(props) => <About {...props} />} />
+          <Route exact path="/solo" render={(props) => <Solo {...props} />} />
+          <Route exact path="/multi" render={(props) => <Multi {...props} />} />
+          <Route
+            exact
+            path="/profile"
+            render={(props) => <Profile {...props} />}
+          />
+        </Switch>
+      </Router> */}
+      {/* <NavLink></NavLink>
+      <NavLink></NavLink>
+      <NavLink></NavLink>
+      <NavLink></NavLink>
+      <NavLink></NavLink> */}
     </>
   );
 }
