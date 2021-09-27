@@ -12,6 +12,7 @@ export const registerUser = async (register) => {
 };
 
 export const loginUser = async (login) => {
+  console.log('apiLogin', login);
   return await fetch(url + 'login', {
     method: 'POST',
     mode: 'cors',

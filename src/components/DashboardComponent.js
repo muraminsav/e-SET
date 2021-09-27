@@ -13,14 +13,18 @@ const initialState = {
   score: '',
   gameId: '',
 };
+
 export default function DashboardComponent(props) {
   const { userInfo } = useContext(UserContext);
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
     const grabUser = async () => {
-      const user = await getUser();
+      const user = await getUser(userInfo.id);
+
       if (user) {
+        console.log('dashbordUser', user);
+        console.log('context user', userInfo.id);
         const { firstName, lastName } = user;
         setState((prevState) => {
           return {
@@ -41,7 +45,7 @@ export default function DashboardComponent(props) {
       <Navibar />
       <div className="d-flex align-items-center" style={{ height: '100%' }}>
         <Container>
-          <h3>Greatings {userInfo.firstName}</h3>
+          <h3>Greatings {state.firstName}</h3>
           <Card
             style={{
               height: '50vh',

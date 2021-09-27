@@ -6,9 +6,9 @@ import { logoutUser } from '../api/Api';
 // useEffect
 
 export default function Navibar() {
-  const logout = auth.logout(() => {
-    logoutUser('token');
-  });
+  // const logout = auth.logout(() => {
+  //   logoutUser('token');
+  // });
 
   return (
     <Container>
@@ -24,7 +24,14 @@ export default function Navibar() {
               <Nav.Link href="/me">Home</Nav.Link>
               <Nav.Link href="/profile">Profile Settings</Nav.Link>
               <Nav.Link href="/about">About</Nav.Link>
-              <Nav.Link onClick={logout} href="/">
+              <Nav.Link
+                onClick={() => {
+                  auth.logout(() => {
+                    logoutUser('token');
+                  });
+                }}
+                href="/"
+              >
                 Logout
               </Nav.Link>
             </Nav>

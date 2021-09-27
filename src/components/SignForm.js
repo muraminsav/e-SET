@@ -51,8 +51,9 @@ export default function SignForm(props) {
     if (props.display === 'block' && state.password !== state.passwordConfirm)
       return setError('non matching password');
     const user = { ...state };
+    console.log('apiCall login user', user);
     const res = await apiCall(user);
-    // console.log(res);
+    console.log(res);
     setUserInfo(res);
     if (res.error) {
       setError(res.message);
@@ -157,20 +158,20 @@ export default function SignForm(props) {
           </div>
         )}
       </div>
-      <Router>
+      {/* <Router>
         <Switch>
           <Route
             exact
             path="/me"
             component={() => (
               <DashboardComponent
-              // setIsAuthenticated={setIsAuthenticated}
-              // isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+                isAuthenticated={isAuthenticated}
               />
             )}
           />
         </Switch>
-      </Router>
+      </Router> */}
     </div>
   );
 }

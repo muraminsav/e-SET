@@ -53,15 +53,15 @@ function App() {
               render={(props) => (
                 <SignForm
                   {...props}
-                  display="block"
                   setIsAuthenticated={setIsAuthenticated}
+                  display="block"
                 />
               )}
             />
             <Route
               exact
               path="**"
-              render={(props) => (
+              render={() => (
                 <h1
                   className="d-flex justify-content-center align-items-center"
                   style={{ minHeight: '90vh' }}

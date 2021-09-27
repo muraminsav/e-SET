@@ -35,7 +35,9 @@ exports.loginUser = async (req, res) => {
       user.password
     );
     if (!passwordCheck) throw new Error();
-    req.session.id = user.id;
+    req.session.uid = user.id;
+    console.log('login userid', user.id);
+    console.log('seesioId', req.session.uid);
     const { password, ...data } = user;
     res.status(200).send(data);
   } catch (error) {
@@ -47,11 +49,11 @@ exports.loginUser = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const id = req.params[id];
-    console.log(req.params);
+    const id = req.params.id;
+    console.log('id', id);
     const user = await db.User.findOne({ where: { id: id } });
     res.status(200).send(user);
-  } catch {
+  } catch (error) {
     res.status(404).send({ error, message: 'User not found' });
   }
 };
