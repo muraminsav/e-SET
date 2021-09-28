@@ -12,7 +12,6 @@ export const registerUser = async (register) => {
 };
 
 export const updateUser = async (user, userId) => {
-  console.log(user, userId);
   return await fetch(url + 'updateUser/' + userId, {
     method: 'PUT',
     mode: 'cors',
@@ -56,5 +55,20 @@ export const logoutUser = async () => {
     headers: { 'Content-Type': 'application/json' },
   })
     .then((res) => res.json())
+    .catch((err) => console.log(err));
+};
+export const deleteUser = async () => {
+  const id = localStorage.uId;
+  console.log('apiDel', id);
+  return fetch(url + 'delete/' + id, {
+    method: 'Delete',
+    credentials: 'include',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then((res) => res.json())
+    .then(() => {
+      logoutUser();
+    })
     .catch((err) => console.log(err));
 };

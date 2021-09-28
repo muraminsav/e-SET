@@ -89,3 +89,12 @@ exports.logout = (req, res) => {
     }
   });
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    await db.User.destroy({ where: { id: req.params.id } });
+    res.redirect('/login');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

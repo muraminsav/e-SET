@@ -2,21 +2,13 @@ import React from 'react';
 
 import { Container, Card, Button } from 'react-bootstrap';
 import Navibar from './Navibar';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { getUser } from '../api/Api';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  NavLink,
-} from 'react-router-dom';
-import About from './About';
-import Solo from './Solo';
-import Multi from './Multi';
-import Profile from './Profile';
+
 const initialState = {
   firstName: '',
   lastName: '',
+  email: '',
   score: '',
   gameId: '',
 };
@@ -35,10 +27,8 @@ export default function DashboardComponent(props) {
     }
   }, []);
 
-  if (!localStorage.uId) {
-    props.history.push('/login');
-  }
-  console.log(userState);
+  uId || userState.email || props.history.push('/login');
+
   return (
     <>
       <Navibar value={userState} />
@@ -74,23 +64,6 @@ export default function DashboardComponent(props) {
           </Button>
         </Container>
       </div>
-      {/* <Router>
-        <Switch>
-          <Route exact path="/about" render={(props) => <About {...props} />} />
-          <Route exact path="/solo" render={(props) => <Solo {...props} />} />
-          <Route exact path="/multi" render={(props) => <Multi {...props} />} />
-          <Route
-            exact
-            path="/profile"
-            render={(props) => <Profile {...props} />}
-          />
-        </Switch>
-      </Router> */}
-      {/* <NavLink></NavLink>
-      <NavLink></NavLink>
-      <NavLink></NavLink>
-      <NavLink></NavLink>
-      <NavLink></NavLink> */}
     </>
   );
 }

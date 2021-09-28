@@ -3,17 +3,16 @@ import Navibar from './Navibar';
 
 import { Form, Button, Alert } from 'react-bootstrap';
 import { UserContext } from '../context/userContext';
-import { updateUser } from '../api/Api';
+import { updateUser, deleteUser } from '../api/Api';
 
 export default function Profile(props) {
-  console.log(localStorage.uId);
   if (!localStorage.uId) {
     props.history.push('/login');
   }
   const { userInfo, setUserInfo } = useContext(UserContext);
-
   const { firstName, lastName, email } = userInfo;
   const [error, setError] = useState('');
+  const [saveBtn, setSaveBtn] = useState('primary');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +20,7 @@ export default function Profile(props) {
       ...prevState,
       [name]: value,
     }));
+    setSaveBtn('success');
   };
 
   const submit = async (e) => {
@@ -29,16 +29,24 @@ export default function Profile(props) {
       return setError('Non matching password');
     try {
       const user = { ...userInfo };
-      const res = await updateUser(user, localStorage.uid);
-      // setUserInfo(...res);
-      console.log('respond', res);
+      const res = await updateUser(user, localStorage.uId);
+
+      console.log('luID', localStorage.uId);
       setError('');
     } catch (error) {
-      // setError(error);
+      setError(error);
       console.log(error);
     }
+    setSaveBtn('primary');
   };
-  console.log(userInfo);
+  const delUser = async () => {
+    try {
+      const delUser = await deleteUser();
+      props.history.push('/login');
+    } catch (error) {
+      setError(error);
+    }
+  };
 
   return (
     <div>
@@ -103,7 +111,7 @@ export default function Profile(props) {
             </Form.Group>
 
             <div className="py-3 pb-4 border-bottom d-flex justify-content-between">
-              <Button type="submit" className="btn btn-primary mr-3">
+              <Button type="submit" className={`btn btn-${saveBtn} mr-3`}>
                 Save Changes
               </Button>
               <Button className="btn btn-info mr-3" href="/">
@@ -116,7 +124,9 @@ export default function Profile(props) {
               <b>Delete account</b>
             </div>
             <div className="">
-              <button className="btn btn-danger m-3">Delete</button>
+              <button className="btn btn-danger m-3" onClick={delUser}>
+                Delete
+              </button>
             </div>
           </div>
         </div>
