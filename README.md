@@ -1,7 +1,6 @@
 # e-SET
 
-
-<!--Original goal of the project to create multiplayer card game SET game at the moment user creation an authentication features functional as well as established real time connection between users via rooms -->
+Original goal of the project to create multiplayer card game SET game at the moment user creation an authentication features functional as well as established real time connection between users via rooms
 
 ## Screenshots
 
@@ -78,11 +77,11 @@ David Rozsavolgyi- [Github](https://github.com/muraminsav) - [LinkedIn](https://
 
 
 ## further feature development: 
-Create game logic
-Solo game play
-Create game room
-multiplayer option
-UX/UI
+Create game logic,
+Solo game play,
+Create game room,
+multiplayer option,
+UX/UI,
 
 
 
