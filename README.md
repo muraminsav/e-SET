@@ -22,9 +22,20 @@ from the terminal open the repository directory
 ```
 cd e-SET
 ```
+## Run the Client
+1. Install client dependencies
+```
+npm install
+```
+1. Runt the Client
+```
+npm start
+```
+
+
 ###  Run the Server
 
-1. Install backend dependencies
+1. Install server dependencies
 From the terminal open the server directory
 ```
 cd server 
@@ -54,12 +65,6 @@ npm start
 ```
 
 
-3. Start development server
-from the root directory
-```
-npm start
-```
-
 
 ## Built with
 * [React](https://reactjs.org/) - Front end library for user interface
@@ -77,11 +82,11 @@ David Rozsavolgyi- [Github](https://github.com/muraminsav) - [LinkedIn](https://
 
 
 ## further feature development: 
-Create game logic,
-Solo game play,
-Create game room,
-multiplayer option,
-UX/UI,
+* Create game logic
+* Solo game play
+* Create game room
+* Multiplayer option
+* UX/UI
 
 
 
