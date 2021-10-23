@@ -1,6 +1,6 @@
 # e-SET
 
-Original goal of the project to create multiplayer card game SET game at the moment user creation an authentication features functional as well as established real time connection between users via rooms
+Original goal of the project to create multiplayer card game SET game at the moment user creation and authentication features functional as well as established real time connection between users via rooms
 
 ## Screenshots
 
