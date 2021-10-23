@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = 3001;
+require('dotenv/config');
+const PORT = process.env.SERVER_PORT;
 const session = require('express-session');
 const httpServer = require('http').createServer(app);
 const io = require('socket.io')(httpServer, {
@@ -15,7 +16,7 @@ const db = require('./models/index');
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
@@ -25,7 +26,7 @@ app.use(
     name: 'sid',
     saveUninitialized: false,
     resave: false,
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET,
     cookie: {
       maxAge: 60 * 60 * 1000, // 1hr
       sameSite: true,
@@ -50,7 +51,7 @@ io.on('connection', async (socket) => {
 
   // Leave the room if the user closes the socket
   socket.on('disconnect', () => {
-    console.log(`Client ${socket.id} diconnected`);
+    console.log(`Client ${socket.id} disconnected`);
     socket.leave(roomId);
   });
 });

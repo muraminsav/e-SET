@@ -1,0 +1,13 @@
+.my-message {
+  margin: 5px;
+  display: flex;
+  justify-content: start;
+  margin-right: auto;
+}
+
+.received-message {
+  display: flex;
+  margin-right: 20px;
+  justify-content: end;
+  margin-left: auto;
+}

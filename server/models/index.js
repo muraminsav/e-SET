@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
+require('dotenv/config');
 
 const config = {
   host: 'localhost',
@@ -8,7 +9,11 @@ const config = {
   query: { raw: true },
 };
 
-const sequelize = new Sequelize('set', 'postgres', '123', config);
+const sequelize = new Sequelize(
+  process.env.DB_NAME, 
+  process.env.DB_USER, 
+  process.env.DB_PASSWORD, 
+  config);
 const db = {};
 
 const files = fs.readdirSync(__dirname);

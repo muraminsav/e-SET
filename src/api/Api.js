@@ -59,7 +59,6 @@ export const logoutUser = async () => {
 };
 export const deleteUser = async () => {
   const id = localStorage.uId;
-  console.log('apiDel', id);
   return fetch(url + 'delete/' + id, {
     method: 'Delete',
     credentials: 'include',

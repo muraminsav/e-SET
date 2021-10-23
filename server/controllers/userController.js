@@ -32,8 +32,6 @@ exports.updateUser = async (req, res) => {
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
       data.password = hashedPassword;
     }
-    console.log('updating', { ...data });
-    console.log(req.body.id);
     const user = await db.User.update(
       { ...data },
       { where: { id: req.params.id } }

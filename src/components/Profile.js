@@ -13,7 +13,7 @@ export default function Profile(props) {
   const { firstName, lastName, email } = userInfo;
   const [error, setError] = useState('');
   const [saveBtn, setSaveBtn] = useState('primary');
-
+  console.log('uf profile', userInfo);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserInfo((prevState) => ({

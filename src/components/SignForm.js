@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Card, Button, Alert } from 'react-bootstrap';
-import { BrowserRouter as Router, Switch, Link, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { loginUser, registerUser } from '../api/Api';
 
 const regInitial = {
@@ -50,7 +50,6 @@ export default function SignForm(props) {
       return setError('non matching password');
     const user = { ...userInput };
     const res = await apiCall(user);
-
     localStorage.setItem('uId', res.id);
 
     if (res.error) {
@@ -59,6 +58,9 @@ export default function SignForm(props) {
     } else {
       props.history.push(path);
     }
+    setTimeout(() => {
+      localStorage.removeItem('uId');
+    }, 60 * 60 * 1000);
   };
 
   return (

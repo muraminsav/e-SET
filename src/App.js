@@ -1,18 +1,16 @@
-// import './App.css';
 import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import SignForm from './components/SignForm';
 import DashboardComponent from './components/DashboardComponent';
-// import auth from './secure/auth';
+
 import { UserContext } from './context/userContext';
 import Profile from './components/Profile';
-import Multi from './components/Multi';
-import Solo from './components/Solo';
-import About from './components/About';
+import Messages from './components/Messages';
+
 import { getUser } from './api/Api';
 
-function App(props) {
+function App() {
   const [userInfo, setUserInfo] = useState(UserContext);
   useEffect(async () => {
     try {
@@ -46,23 +44,13 @@ function App(props) {
               />
               <Route
                 exact
-                path="/about"
-                render={(props) => <About {...props} />}
-              />
-              <Route
-                exact
-                path="/solo"
-                render={(props) => <Solo {...props} />}
-              />
-              <Route
-                exact
-                path="/multi"
-                render={(props) => <Multi {...props} />}
-              />
-              <Route
-                exact
                 path="/profile"
                 render={(props) => <Profile {...props} />}
+              />
+              <Route
+                exact
+                path="/messages/:roomId"
+                render={(props) => <Messages {...props} />}
               />
               <Route
                 exact
